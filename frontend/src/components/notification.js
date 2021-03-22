@@ -16,7 +16,8 @@ export const Notification = ({content}) => {
       background: isError() ? "pink" : "lightgreen",
       color: isError() ? "red" : "green",
       borderColor: isError() ? "red" : "green",
-      border: "1px solid"
+      border: "1px solid",
+      padding: "10px"
     };
   
     return (

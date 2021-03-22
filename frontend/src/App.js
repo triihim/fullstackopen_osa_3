@@ -12,9 +12,9 @@ const App = () => {
 
   const NOTIFICATION_DURATION_S = 3;
 
-  const nameAlreadyExists = () => !!contacts.find(p => p.name.toLowerCase() === newName.toLowerCase());
+  const nameAlreadyExists = () => !!contacts.find(p => p.name && p.name.toLowerCase() === newName.toLowerCase());
   const nameIsProvided = () => !!newName && newName.length > 0;
-  const numberIsValid = () => !!newNumber && newNumber.length > 6; // Mock constraint.
+  const numberIsValid = () => !!newNumber && newNumber.length > 0; 
   const sortContactsByName = (c1, c2) => c2.name.toLowerCase() < c1.name.toLowerCase() ? 1 : -1;
 
   const clearInputs = () => {
@@ -33,7 +33,7 @@ const App = () => {
       .catch(console.error);
   }, []);
 
-  const filteredContacts = contacts && contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase())).sort(sortContactsByName);
+  const filteredContacts = contacts && contacts.filter(c => c.name && c.name.toLowerCase().includes(filter.toLowerCase())).sort(sortContactsByName);
 
   const createContact = () => {
     contactService.createContact({name: newName, number: newNumber})
@@ -42,7 +42,7 @@ const App = () => {
         clearInputs();
         showNotification(NotificationType.SUCCESS, `Added contact: ${createdContact.name}`);
       })
-      .catch(e => showNotification(NotificationType.ERROR, "Something went wrong in contact creation"));
+      .catch(e => showNotification(NotificationType.ERROR, e.response.data.error));
   }
 
   const deleteContact = id => {
@@ -53,7 +53,7 @@ const App = () => {
           setContacts(contacts.filter(c => c.id !== id));
           showNotification(NotificationType.SUCCESS, `Deleted contact: ${contactToDelete.name}`);
         })
-        .catch(e => showNotification(NotificationType.ERROR, `Couldn't delete ${contactToDelete.name}. Maybe the contact is already deleted`))
+        .catch(e => showNotification(NotificationType.ERROR, e.response.data.error))
     }
   }
 
@@ -66,7 +66,7 @@ const App = () => {
           clearInputs();
           showNotification(NotificationType.SUCCESS, `Updated the number of ${existingContact.name}`);
         })
-        .catch(e => showNotification(NotificationType.ERROR, `Couldn't update the number of ${existingContact.name}`));
+        .catch(e => showNotification(NotificationType.ERROR, e.response.data.error));
     } else {
       alert("Provide a proper number");
     }
